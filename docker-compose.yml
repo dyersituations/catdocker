@@ -1,0 +1,41 @@
+version: "3.4"
+services:
+  ingress:
+    image: jwilder/nginx-proxy
+    ports:
+      - 80:80
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+  # certbot:
+  #   image: certbot/certbot
+    # entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+    # volumes:
+      # - ./data/certbot/conf:/etc/letsencrypt
+      # - ./data/certbot/www:/var/www/certbot
+  caseydyer-nginx:
+    image: test/nginx
+    depends_on:
+      - caseydyer-app
+    ports:
+      - 80:80
+      # - 443:443
+    restart: always
+    ports:
+      - 81:80
+    environment:
+      - VIRTUAL_HOST=caseydyer.com
+    # command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+    volumes:
+      - ./catcms:/var/www
+      # - ./data/certbot/conf:/etc/letsencrypt
+      # - ./data/certbot/www:/var/www/certbot
+  caseydyer-app:
+    image: test/app
+    volumes:
+      - ./catcms:/var/www
+      - caseydyer-db:/var/www/db
+      - caseydyer-uploads:/var/www/public/uploads
+    restart: always
+volumes:
+  caseydyer-db:
+  caseydyer-uploads:

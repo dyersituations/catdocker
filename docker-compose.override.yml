@@ -1,0 +1,15 @@
+version: "3.4"
+services:
+  caseydyer-nginx:
+    build:
+      context: .
+      dockerfile: nginx.Dockerfile
+      args:
+        APP_NAME: caseydyer
+  caseydyer-app:
+    build:
+      context: catcms
+      dockerfile: ../app.Dockerfile
+      args:
+        RAILS_ENV: "${RAILS_ENV}"
+        SECRET_KEY_BASE: "${SECRET_KEY_BASE}"
