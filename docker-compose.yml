@@ -13,7 +13,7 @@ services:
       # - ./data/certbot/conf:/etc/letsencrypt
       # - ./data/certbot/www:/var/www/certbot
   caseydyer-nginx:
-    image: test/nginx
+    image: dyersituations/catnginx:caseydyer
     depends_on:
       - caseydyer-app
     ports:
@@ -30,7 +30,7 @@ services:
       # - ./data/certbot/conf:/etc/letsencrypt
       # - ./data/certbot/www:/var/www/certbot
   caseydyer-app:
-    image: test/app
+    image: dyersituations/catcms:latest
     volumes:
       - ./catcms:/var/www
       - caseydyer-db:/var/www/db
