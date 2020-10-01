@@ -6,6 +6,8 @@ services:
       dockerfile: nginx.Dockerfile
       args:
         APP_NAME: caseydyer
+    volumes:
+      - ./catcms:/var/www
   caseydyer-app:
     build:
       context: catcms

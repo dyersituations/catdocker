@@ -26,16 +26,15 @@ services:
       - VIRTUAL_HOST=caseydyer.com
     # command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
     volumes:
-      - ./catcms:/var/www
+      - caseydyer-public:/var/www/public
       # - ./data/certbot/conf:/etc/letsencrypt
       # - ./data/certbot/www:/var/www/certbot
   caseydyer-app:
     image: dyersituations/catcms:latest
     volumes:
-      - ./catcms:/var/www
       - caseydyer-db:/var/www/db
-      - caseydyer-uploads:/var/www/public/uploads
+      - caseydyer-public:/var/www/public
     restart: always
 volumes:
   caseydyer-db:
-  caseydyer-uploads:
+  caseydyer-public:
