@@ -6,29 +6,17 @@ services:
       - 80:80
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
-  # certbot:
-  #   image: certbot/certbot
-    # entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
-    # volumes:
-      # - ./data/certbot/conf:/etc/letsencrypt
-      # - ./data/certbot/www:/var/www/certbot
   caseydyer-nginx:
     image: dyersituations/catnginx:caseydyer
     depends_on:
       - caseydyer-app
     ports:
-      - 80:80
-      # - 443:443
-    restart: always
-    ports:
       - 81:80
+    restart: always
     environment:
       - VIRTUAL_HOST=caseydyer.com
-    # command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
     volumes:
       - caseydyer-public:/var/www/public
-      # - ./data/certbot/conf:/etc/letsencrypt
-      # - ./data/certbot/www:/var/www/certbot
   caseydyer-app:
     image: dyersituations/catcms:latest
     volumes:

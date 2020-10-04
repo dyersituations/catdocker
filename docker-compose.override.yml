@@ -5,9 +5,8 @@ services:
       context: .
       dockerfile: nginx.Dockerfile
       args:
+        RAILS_ENV: "${RAILS_ENV}"
         APP_NAME: caseydyer
-    volumes:
-      - ./catcms:/var/www
   caseydyer-app:
     build:
       context: catcms
@@ -15,3 +14,5 @@ services:
       args:
         RAILS_ENV: "${RAILS_ENV}"
         SECRET_KEY_BASE: "${SECRET_KEY_BASE}"
+    volumes:
+      - ./catcms:/var/www
