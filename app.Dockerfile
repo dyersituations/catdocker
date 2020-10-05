@@ -19,10 +19,6 @@ RUN gem install bundler
 RUN bundle install
 COPY . .
 
-RUN bundle exec rake assets:precompile
-
-RUN rake db:create db:migrate
-
 EXPOSE 3000
 
-CMD ["bundle", "exec", "puma", "-C", "config/puma.rb"]
+CMD ["sh", "init.sh"]
