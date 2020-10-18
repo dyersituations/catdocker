@@ -1,0 +1,34 @@
+version: "3"
+services:
+  caseydyer-nginx:
+    container_name: caseydyer-nginx
+    image: dyersituations/catnginx:caseydyer
+    expose:
+      - 80
+    depends_on:
+      - caseydyer-app
+    environment:
+      - VIRTUAL_HOST=caseydyer.com,www.caseydyer.com
+      - LETSENCRYPT_HOST=caseydyer.com,www.caseydyer.com
+    volumes:
+      - caseydyer-public:/var/www/public
+    networks:
+      - nginx-proxy
+      - app
+    restart: always
+  caseydyer-app:
+    image: dyersituations/catcms:latest
+    volumes:
+      - caseydyer-db:/var/www/db
+      - caseydyer-public:/var/www/public
+    networks:
+      - app
+    restart: always
+volumes:
+  caseydyer-db:
+  caseydyer-public:
+networks:
+  nginx-proxy:
+    external:
+      name: nginx-proxy
+  app:
