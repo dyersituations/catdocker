@@ -5,7 +5,6 @@ services:
       context: ../
       dockerfile: nginx.Dockerfile
       args:
-        RAILS_ENV: "${RAILS_ENV}"
         APP_NAME: caseydyer
   caseydyer-app:
     build:
