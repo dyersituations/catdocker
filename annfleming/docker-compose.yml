@@ -1,0 +1,46 @@
+version: "3"
+services:
+  annfleming-nginx:
+    container_name: annfleming-nginx
+    image: dyersituations/catnginx:annfleming
+    expose:
+      - 80
+    depends_on:
+      - annfleming-app
+    environment:
+      - VIRTUAL_HOST=annfleming.com,www.annfleming.com
+      - LETSENCRYPT_HOST=annfleming.com,www.annfleming.com
+    volumes:
+      - annfleming-public:/var/www/public
+    networks:
+      - nginx-proxy
+      - app
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "3"
+        max-size: "50m"
+    restart: always
+  annfleming-app:
+    image: dyersituations/catcms:latest
+    environment:
+      - RAILS_LOG_TO_STDOUT=true
+    volumes:
+      - annfleming-db:/var/www/db
+      - annfleming-public:/var/www/public
+    networks:
+      - app
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "3"
+        max-size: "50m"
+    restart: always
+volumes:
+  annfleming-db:
+  annfleming-public:
+networks:
+  nginx-proxy:
+    external:
+      name: nginx-proxy
+  app:
