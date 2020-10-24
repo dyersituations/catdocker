@@ -15,14 +15,26 @@ services:
     networks:
       - nginx-proxy
       - app
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "3"
+        max-size: "50m"
     restart: always
   caseydyer-app:
     image: dyersituations/catcms:latest
+    environment:
+      - RAILS_LOG_TO_STDOUT=true
     volumes:
       - caseydyer-db:/var/www/db
       - caseydyer-public:/var/www/public
     networks:
       - app
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "3"
+        max-size: "50m"
     restart: always
 volumes:
   caseydyer-db:

@@ -11,6 +11,11 @@ services:
       - letsencrypt-certs:/etc/nginx/certs
       - letsencrypt-vhost-d:/etc/nginx/vhost.d
       - letsencrypt-html:/usr/share/nginx/html
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "3"
+        max-size: "50m"
   letsencrypt-proxy:
     image: jrcs/letsencrypt-nginx-proxy-companion
     container_name: letsencrypt-proxy
@@ -22,6 +27,11 @@ services:
     environment:
       - DEFAULT_EMAIL=dyersituations@gmail.com
       - NGINX_PROXY_CONTAINER=nginx-proxy
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "3"
+        max-size: "50m"
 networks:
   default:
     external:
