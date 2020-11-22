@@ -1,3 +1,6 @@
 [submodule "catcms"]
 	path = catcms
 	url = https://github.com/dyersituations/catcms.git
+[submodule "catspa"]
+	path = catspa
+	url = https://github.com/dyersituations/catspa.git
