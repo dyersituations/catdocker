@@ -72,9 +72,7 @@ docker-compose up -d
 ```bash
 ssh root@$IP_ADDRESS
 docker container ls
-docker cp <CONTAINER_ID>:/var/www backup
-# Exit Docker container
-exit
+docker cp $CONTAINER_NAME:/var/www backup
 # Exit SSH
 exit
 cd ~/git

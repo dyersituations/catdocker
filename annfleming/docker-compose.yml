@@ -26,7 +26,7 @@ services:
     environment:
       - RAILS_LOG_TO_STDOUT=true
     volumes:
-      - annfleming-db:/var/www/db
+      - annfleming-db:/var/www/db/sqlite3
       - annfleming-public:/var/www/public
     networks:
       - app
