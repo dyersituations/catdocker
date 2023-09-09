@@ -16,9 +16,9 @@ jobs:
           repository: dyersituations/catcms
       - name: Create .env file
         run: |
-          touch ${{ $GITHUB_WORKSPACE }}/catdocker/${{ inputs.domain }}/.env
+          touch $GITHUB_WORKSPACE/catdocker/${{ inputs.domain }}/.env
           echo RAILS_ENV=production >> .env
           echo SECRET_KEY_BASE=${{ github.sha }} >> .env
-          cat ${{ $GITHUB_WORKSPACE }}/catdocker/${{ inputs.domain }}/.env
+          cat $GITHUB_WORKSPACE/catdocker/${{ inputs.domain }}/.env
       # - name: Build images
       #   run: docker-compose build -f "catdocker/${{ inputs.domain }}/docker-compose.yml" --no-cache
