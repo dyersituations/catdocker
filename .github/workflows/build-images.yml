@@ -21,7 +21,7 @@ jobs:
           echo "::add-mask::$SECRET_KEY_BASE"
           touch $GITHUB_WORKSPACE/${{ inputs.domain }}/.env
           echo RAILS_ENV=production >> .env
-          echo SECRET_KEY_BASE=$SECRET_KEY_BASE >> .env
+          echo SECRET_KEY_BASE="$SECRET_KEY_BASE" >> .env
           cat $GITHUB_WORKSPACE/${{ inputs.domain }}/.env
       - name: Build images
         run: docker-compose build -f "${{ inputs.domain }}/docker-compose.yml" --no-cache
