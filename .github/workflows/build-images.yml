@@ -1,0 +1,24 @@
+on:
+  workflow_dispatch:
+    inputs:
+      domain:
+        required: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out catdocker repo
+        uses: actions/checkout@v2
+      - name: Check out catcms repo
+        uses: actions/checkout@v2
+        with:
+          repository: dyersituations/catcms
+      - name: Create .env file
+        run: |
+          touch ${{ inputs.domain }}/.env
+          echo RAILS_ENV=production >> .env
+          echo SECRET_KEY_BASE=${{ github.sha }} >> .env
+          cat ${{ inputs.domain }}/.env
+      - name: Build images
+        run: docker-compose build -f "${{ inputs.domain }}/docker-compose.yml" --no-cache
