@@ -22,4 +22,4 @@ jobs:
           echo SECRET_KEY_BASE=$(openssl rand -hex 64) >> .env
           cat $GITHUB_WORKSPACE/${{ inputs.domain }}/.env
       - name: Build images
-        run: docker-compose -f "$GITHUB_WORKSPACE/${{ inputs.domain }}/docker-compose.yml" build --no-cache
+        run: docker-compose -f "$GITHUB_WORKSPACE/${{ inputs.domain }}/docker-compose.yml" -f "$GITHUB_WORKSPACE/${{ inputs.domain }}/docker-compose.override.yml" build --no-cache
