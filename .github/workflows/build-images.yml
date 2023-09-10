@@ -21,7 +21,12 @@ jobs:
           echo SECRET_KEY_BASE=${{ secrets.SECRET_KEY_BASE }} >> .env
           cat $GITHUB_WORKSPACE/.env
       - name: Build images
-        run: docker-compose -f "$GITHUB_WORKSPACE/${{ inputs.domain }}/docker-compose.yml" -f "$GITHUB_WORKSPACE/${{ inputs.domain }}/docker-compose.override.yml" build --no-cache
+        run: |
+          docker-compose \
+            --env-file $GITHUB_WORKSPACE/.env \
+            -f $GITHUB_WORKSPACE/${{ inputs.domain }}/docker-compose.yml \
+            -f $GITHUB_WORKSPACE/${{ inputs.domain }}/docker-compose.override.yml \
+            build --no-cache
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
