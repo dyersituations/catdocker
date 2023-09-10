@@ -47,4 +47,4 @@ jobs:
           key: ${{ secrets.DIGITAL_OCEAN_KEY }}
           script: |
             cd /home/dockeruser
-            sudo mkdir -p ${{ inputs.domain }}
+            mkdir -p ${{ inputs.domain }}
