@@ -7,13 +7,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      # - name: Check out catdocker repo
-      #   uses: actions/checkout@v4
-      # - name: Check out catcms repo
-      #   uses: actions/checkout@v4
-      #   with:
-      #     repository: dyersituations/catcms
-      #     path: catcms
+      - name: Check out catdocker repo
+        uses: actions/checkout@v4
+      - name: Check out catcms repo
+        uses: actions/checkout@v4
+        with:
+          repository: dyersituations/catcms
+          path: catcms
       # - name: Create .env file
       #   run: |
       #     touch $GITHUB_WORKSPACE/.env
@@ -45,9 +45,7 @@ jobs:
           host: ${{ secrets.DIGITAL_OCEAN_HOST }}
           username: ${{ secrets.DIGITAL_OCEAN_USERNAME }}
           key: ${{ secrets.DIGITAL_OCEAN_KEY }}
-          script: |
-            cd /home/dockeruser
-            mkdir -p ${{ inputs.domain }}
+          script: mkdir -p ${{ inputs.domain }}
       - name: Copy Docker files
         uses: appleboy/scp-action@v0.1.4
         with:
@@ -55,4 +53,4 @@ jobs:
           username: ${{ secrets.DIGITAL_OCEAN_USERNAME }}
           key: ${{ secrets.DIGITAL_OCEAN_KEY }}
           source: $GITHUB_WORKSPACE/${{ inputs.domain }}/docker-compose.yml
-          target: /home/dockeruser/${{ inputs.domain }}
+          target: ${{ inputs.domain }}
