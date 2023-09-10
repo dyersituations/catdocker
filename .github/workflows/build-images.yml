@@ -33,4 +33,9 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Push images
-        run: docker-compose -f "$GITHUB_WORKSPACE/${{ inputs.domain }}/docker-compose.yml" -f "$GITHUB_WORKSPACE/${{ inputs.domain }}/docker-compose.override.yml" push
+        run: |
+          docker-compose \
+            --env-file $GITHUB_WORKSPACE/.env \
+            -f "$GITHUB_WORKSPACE/${{ inputs.domain }}/docker-compose.yml" \
+            -f "$GITHUB_WORKSPACE/${{ inputs.domain }}/docker-compose.override.yml" \
+            push
