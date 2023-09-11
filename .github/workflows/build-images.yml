@@ -14,12 +14,12 @@ jobs:
         with:
           repository: dyersituations/catcms
           path: catcms
-      # - name: Create .env file
-      #   run: |
-      #     touch $GITHUB_WORKSPACE/.env
-      #     echo RAILS_ENV=production >> .env
-      #     echo SECRET_KEY_BASE=${{ secrets.SECRET_KEY_BASE }} >> .env
-      #     cat $GITHUB_WORKSPACE/.env
+      - name: Create .env file
+        run: |
+          touch ${{ env.GITHUB_WORKSPACE }}/.env
+          echo RAILS_ENV=production >> .env
+          echo SECRET_KEY_BASE=${{ secrets.SECRET_KEY_BASE }} >> .env
+          cat ${{ env.GITHUB_WORKSPACE }}/.env
       # - name: Build images
       #   run: |
       #     docker-compose \
