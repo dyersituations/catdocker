@@ -52,5 +52,5 @@ jobs:
           host: ${{ secrets.DIGITAL_OCEAN_HOST }}
           username: ${{ secrets.DIGITAL_OCEAN_USERNAME }}
           key: ${{ secrets.DIGITAL_OCEAN_KEY }}
-          source: $GITHUB_WORKSPACE/${{ inputs.domain }}/docker-compose.yml
+          source: "$GITHUB_WORKSPACE/${{ inputs.domain }}/docker-compose.yml"
           target: ${{ inputs.domain }}
