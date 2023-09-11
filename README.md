@@ -10,7 +10,6 @@ The steps below rely on a [Digital Ocean](https://www.digitalocean.com) droplet,
 - [Docker Compose setup](https://www.digitalocean.com/community/tutorials/how-to-install-docker-compose-on-ubuntu-20-04-quickstart)
 - `docker network create nginx-proxy`
 - Setup `dockeruser` for GitHub Actions
-
 ```bash
 ssh dockeruser@$IP_ADDRESS
 ssh-keygen
@@ -21,6 +20,7 @@ chmod 700 ~/.ssh/authorized_keys && chmod 640 ~/.ssh/authorized_keys2
 cat ~/.ssh/id_rsa
 # Copy to GitHub secret DIGITAL_OCEAN_KEY
 ```
+- Run `build-and-deploy.yml` GitHub Action with `domain` as `proxy`
 
 ### Local Setup
 - [Install Ruby 2.7.0, Rails 5.2.4.4, and Node.js](https://gorails.com/setup)
@@ -38,14 +38,11 @@ Random helpful scripts for server management.
 
 ### Restart Droplet
 - Toggle on/off in DigitalOcean dashboard
-- Start applications
-```bash
-ssh root@$IP_ADDRESS
-cd /home/dockeruser/proxy
-docker-compose up -d
-# For each domain
-cd /home/dockeruser/$DOMAIN
-docker-compose up -d
+- Run `build-and-deploy.yml` GitHub Action for each domain
+```
+proxy
+annfleming
+caseydyer
 ```
 
 ### Backup Site
@@ -153,4 +150,16 @@ ssh root@$IP_ADDRESS
 cd /home/dockeruser/$DOMAIN
 # Pulls new image, recreates container, runs migrations
 docker-compose pull && docker-compose up -d
+```
+
+### Restart Droplet
+- Toggle on/off in DigitalOcean dashboard
+- Start applications
+```bash
+ssh root@$IP_ADDRESS
+cd /home/dockeruser/proxy
+docker-compose up -d
+# For each domain
+cd /home/dockeruser/$DOMAIN
+docker-compose up -d
 ```
