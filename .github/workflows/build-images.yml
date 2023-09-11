@@ -14,38 +14,38 @@ jobs:
         with:
           repository: dyersituations/catcms
           path: catcms
-      # - name: Create .env file
-      #   run: |
-      #     touch $GITHUB_WORKSPACE/.env
-      #     echo RAILS_ENV=production >> .env
-      #     echo SECRET_KEY_BASE=${{ secrets.SECRET_KEY_BASE }} >> .env
-      #     cat $GITHUB_WORKSPACE/.env
-      # - name: Build images
-      #   run: |
-      #     docker-compose \
-      #       --env-file $GITHUB_WORKSPACE/.env \
-      #       -f $GITHUB_WORKSPACE/${{ inputs.domain }}/docker-compose.yml \
-      #       -f $GITHUB_WORKSPACE/${{ inputs.domain }}/docker-compose.override.yml \
-      #       build --no-cache
-      # - name: Log in to Docker Hub
-      #   uses: docker/login-action@v2
-      #   with:
-      #     username: ${{ secrets.DOCKER_USERNAME }}
-      #     password: ${{ secrets.DOCKER_PASSWORD }}
-      # - name: Push images
-      #   run: |
-      #     docker-compose \
-      #       --env-file $GITHUB_WORKSPACE/.env \
-      #       -f "$GITHUB_WORKSPACE/${{ inputs.domain }}/docker-compose.yml" \
-      #       -f "$GITHUB_WORKSPACE/${{ inputs.domain }}/docker-compose.override.yml" \
-      #       push
-      # - name: Create host folder
-      #   uses: appleboy/ssh-action@v1.0.0
-      #   with:
-      #     host: ${{ secrets.DIGITAL_OCEAN_HOST }}
-      #     username: ${{ secrets.DIGITAL_OCEAN_USERNAME }}
-      #     key: ${{ secrets.DIGITAL_OCEAN_KEY }}
-      #     script: mkdir -p ${{ inputs.domain }}
+      - name: Create .env file
+        run: |
+          touch ${{ github.workspace }}/.env
+          echo RAILS_ENV=production >> .env
+          echo SECRET_KEY_BASE=${{ secrets.SECRET_KEY_BASE }} >> .env
+          cat ${{ github.workspace }}/.env
+      - name: Build images
+        run: |
+          docker-compose \
+            --env-file ${{ github.workspace }}/.env \
+            -f ${{ github.workspace }}E/${{ inputs.domain }}/docker-compose.yml \
+            -f ${{ github.workspace }}/${{ inputs.domain }}/docker-compose.override.yml \
+            build --no-cache
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Push images
+        run: |
+          docker-compose \
+            --env-file ${{ github.workspace }}/.env \
+            -f "${{ github.workspace }}/${{ inputs.domain }}/docker-compose.yml" \
+            -f "${{ github.workspace }}/${{ inputs.domain }}/docker-compose.override.yml" \
+            push
+      - name: Create host folder
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.DIGITAL_OCEAN_HOST }}
+          username: ${{ secrets.DIGITAL_OCEAN_USERNAME }}
+          key: ${{ secrets.DIGITAL_OCEAN_KEY }}
+          script: mkdir -p ${{ inputs.domain }}
       - name: Copy Docker files
         uses: appleboy/scp-action@v0.1.4
         with:
