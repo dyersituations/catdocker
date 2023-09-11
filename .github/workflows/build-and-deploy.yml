@@ -24,7 +24,7 @@ jobs:
         run: |
           docker-compose \
             --env-file ${{ github.workspace }}/.env \
-            -f ${{ github.workspace }}E/${{ inputs.domain }}/docker-compose.yml \
+            -f ${{ github.workspace }}/${{ inputs.domain }}/docker-compose.yml \
             -f ${{ github.workspace }}/${{ inputs.domain }}/docker-compose.override.yml \
             build --no-cache
       - name: Log in to Docker Hub
