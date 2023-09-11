@@ -54,3 +54,12 @@ jobs:
           key: ${{ secrets.DIGITAL_OCEAN_KEY }}
           source: "${{ github.workspace }}/${{ inputs.domain }}/docker-compose.yml"
           target: ${{ inputs.domain }}
+      - name: Deploy updated images
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.DIGITAL_OCEAN_HOST }}
+          username: ${{ secrets.DIGITAL_OCEAN_USERNAME }}
+          key: ${{ secrets.DIGITAL_OCEAN_KEY }}
+          script: |
+            cd ${{ inputs.domain }}
+            docker-compose pull && docker-compose up -d
