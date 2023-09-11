@@ -1,10 +1,10 @@
-# CatDocker
+## CatDocker
 Hosting for the [CatCMS](https://github.com/dyersituations/catcms) project using [Docker Compose](https://docs.docker.com/compose/).
 
-# Project Setup
+## Project Setup
 The steps below rely on a [Digital Ocean](https://www.digitalocean.com) droplet, Windows machine running [WSL](https://learn.microsoft.com/en-us/windows/wsl/), and deployment via [GitHub Actions](https://github.com/features/actions).
 
-## Server
+### Server
 - [Initial setup](https://www.digitalocean.com/community/tutorials/initial-server-setup-with-ubuntu-20-04)
 - [Docker setup](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-20-04)
 - [Docker Compose setup](https://www.digitalocean.com/community/tutorials/how-to-install-docker-compose-on-ubuntu-20-04-quickstart)
@@ -22,21 +22,21 @@ cat ~/.ssh/id_rsa
 # Copy to GitHub secret DIGITAL_OCEAN_KEY
 ```
 
-## Local Setup
+### Local Setup
 - [Install Ruby 2.7.0, Rails 5.2.4.4, and Node.js](https://gorails.com/setup)
 - `sudo apt-get install -y imagemagick libmagickwand-dev`
 - `gem install bundler:2.1.4`
 
-## Add Site
+### Add Site
 - Create folder for new domain in `catdocker` repo
 - Copy `docker-compose.yml`
 - Copy `docker-compose.override.yml`
 - Change values to match new domain
  
-# Utilities
+## Utilities
 Random helpful scripts for server management.
 
-## Restart Droplet
+### Restart Droplet
 - Toggle on/off in DigitalOcean dashboard
 - Start applications
 ```bash
@@ -48,7 +48,7 @@ cd /home/dockeruser/$DOMAIN
 docker-compose up -d
 ```
 
-## Backup Site
+### Backup Site
 ```bash
 ssh root@$IP_ADDRESS
 docker container ls
@@ -61,19 +61,19 @@ ssh root@$IP_ADDRESS
 rm -rf backup
 ```
 
-## Connect to Container
+### Connect to Container
 ```bash
 docker container ls
 docker exec -it $CONTAINER_NAME bash
 ```
 
-## View Container Logs
+### View Container Logs
 ```bash
 docker container ls
 docker logs -f $CONTAINER_NAME
 ```
 
-## Reset Docker
+### Reset Docker
 ```bash
 docker rm -vf $(docker ps -a -q)
 docker rmi -f $(docker images -a -q)
@@ -82,7 +82,7 @@ docker network prune
 docker system prune
 ```
 
-## Reset/Reconnect SSH
+### Reset/Reconnect SSH
 ```bash
 # Reset password via DigitalOcean droplet settings
 # Open droplet recovery console
@@ -115,10 +115,10 @@ sudo nano /etc/ssh/sshd_config
 sudo service sshd restart
 ```
 
-# Old Manual Steps
+## Old Manual Steps
 These steps were used before GitHub Actions were utilized.
 
-## Build Site
+### Build Site
 - Ensure domain folder has `.env`
 
 ```
@@ -139,7 +139,7 @@ sudo docker login
 sudo docker compose push
 ```
 
-## New Site Deployment
+### New Site Deployment
 ```bash
 ssh root@$IP_ADDRESS
 mkdir /home/dockeruser/$DOMAIN
@@ -147,7 +147,7 @@ scp docker-compose.yml root@$IP_ADDRESS:/home/dockeruser/$DOMAIN
 docker-compose up -d
 ```
 
-## Update Site
+### Update Site
 ```bash
 ssh root@$IP_ADDRESS
 cd /home/dockeruser/$DOMAIN
