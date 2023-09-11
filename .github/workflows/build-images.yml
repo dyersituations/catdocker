@@ -14,12 +14,12 @@ jobs:
         with:
           repository: dyersituations/catcms
           path: catcms
-      - name: Create .env file
-        run: |
-          touch ${{ env.GITHUB_WORKSPACE }}/.env
-          echo RAILS_ENV=production >> .env
-          echo SECRET_KEY_BASE=${{ secrets.SECRET_KEY_BASE }} >> .env
-          cat ${{ env.GITHUB_WORKSPACE }}/.env
+      # - name: Create .env file
+      #   run: |
+      #     touch $GITHUB_WORKSPACE/.env
+      #     echo RAILS_ENV=production >> .env
+      #     echo SECRET_KEY_BASE=${{ secrets.SECRET_KEY_BASE }} >> .env
+      #     cat $GITHUB_WORKSPACE/.env
       # - name: Build images
       #   run: |
       #     docker-compose \
@@ -39,13 +39,13 @@ jobs:
       #       -f "$GITHUB_WORKSPACE/${{ inputs.domain }}/docker-compose.yml" \
       #       -f "$GITHUB_WORKSPACE/${{ inputs.domain }}/docker-compose.override.yml" \
       #       push
-      - name: Create host folder
-        uses: appleboy/ssh-action@v1.0.0
-        with:
-          host: ${{ secrets.DIGITAL_OCEAN_HOST }}
-          username: ${{ secrets.DIGITAL_OCEAN_USERNAME }}
-          key: ${{ secrets.DIGITAL_OCEAN_KEY }}
-          script: mkdir -p ${{ inputs.domain }}
+      # - name: Create host folder
+      #   uses: appleboy/ssh-action@v1.0.0
+      #   with:
+      #     host: ${{ secrets.DIGITAL_OCEAN_HOST }}
+      #     username: ${{ secrets.DIGITAL_OCEAN_USERNAME }}
+      #     key: ${{ secrets.DIGITAL_OCEAN_KEY }}
+      #     script: mkdir -p ${{ inputs.domain }}
       - name: Copy Docker files
         uses: appleboy/scp-action@v0.1.4
         with:
@@ -54,3 +54,5 @@ jobs:
           key: ${{ secrets.DIGITAL_OCEAN_KEY }}
           source: "${{ env.GITHUB_WORKSPACE }}/${{ inputs.domain }}/docker-compose.yml"
           target: ${{ inputs.domain }}
+        env:
+          GITHUB_WORKSPACE: $GITHUB_WORKSPACE
