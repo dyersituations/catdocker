@@ -153,8 +153,9 @@ jobs:
           host: ${{ secrets.DIGITAL_OCEAN_HOST }}
           username: ${{ secrets.DIGITAL_OCEAN_USERNAME }}
           key: ${{ secrets.DIGITAL_OCEAN_KEY }}
-          source: "${{ github.workspace }}/${{ inputs.domain }}/docker-compose.yml"
+          source: "${{ inputs.domain }}/docker-compose.yml,${{ inputs.domain }}/docker-compose.override.yml"
           target: ${{ inputs.domain }}
+          strip_components: 1
       - name: Deploy updated images
         uses: appleboy/ssh-action@v1.0.0
         with:
@@ -164,7 +165,7 @@ jobs:
           script: |
             cd ${{ inputs.domain }}
             if command -v docker-compose >/dev/null 2>&1; then
-              docker-compose pull && docker-compose up -d
+              docker-compose -f docker-compose.yml -f docker-compose.override.yml pull && docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d
             else
-              docker compose pull && docker compose up -d
+              docker compose -f docker-compose.yml -f docker-compose.override.yml pull && docker compose -f docker-compose.yml -f docker-compose.override.yml up -d
             fi
