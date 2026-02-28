@@ -1,1 +1,7 @@
 .env
+
+# In top-level folders, ignore everything except Docker Compose files.
+/*/**
+!/.github/**
+!/*/docker-compose.yml
+!/*/docker-compose.override.yml

@@ -1,0 +1,6 @@
+version: "3"
+services:
+  biddyonthebench-nginx:
+    build:
+      context: ../
+      dockerfile: spa.Dockerfile

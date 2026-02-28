@@ -1,0 +1,22 @@
+version: "3"
+services:
+  biddyonthebench-nginx:
+    container_name: biddyonthebench-nginx
+    image: dyersituations/catnginx:biddyonthebench
+    expose:
+      - 80
+    environment:
+      - VIRTUAL_HOST=biddyonthebench.com,www.biddyonthebench.com
+      - LETSENCRYPT_HOST=biddyonthebench.com,www.biddyonthebench.com
+    networks:
+      - nginx-proxy
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "3"
+        max-size: "50m"
+    restart: always
+networks:
+  nginx-proxy:
+    external:
+      name: nginx-proxy

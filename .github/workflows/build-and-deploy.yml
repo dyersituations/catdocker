@@ -3,7 +3,17 @@ on:
   workflow_dispatch:
     inputs:
       domain:
+        description: Domain folder in this repo (for example, biddyonthebench)
+        type: string
         required: true
+      deployment_target:
+        description: Deploy a Rails app or biddy SPA
+        type: choice
+        required: true
+        default: rails
+        options:
+          - rails
+          - biddy-spa
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -11,35 +21,119 @@ jobs:
       - name: Check out catdocker repo
         uses: actions/checkout@v4
       - name: Check out catcms repo
+        if: ${{ inputs.deployment_target == 'rails' }}
         uses: actions/checkout@v4
         with:
           repository: dyersituations/catcms
           path: catcms
+      - name: Check out biddy-spa repo into domain folder
+        if: ${{ inputs.deployment_target == 'biddy-spa' }}
+        uses: actions/checkout@v4
+        with:
+          repository: dyersituations/biddy-spa
+          path: ${{ inputs.domain }}
+          clean: false
+      - name: Validate biddy-spa deployment input
+        if: ${{ inputs.deployment_target == 'biddy-spa' }}
+        run: |
+          set -euo pipefail
+
+          OVERRIDE_FILE="${{ github.workspace }}/${{ inputs.domain }}/docker-compose.override.yml"
+          if [ ! -f "$OVERRIDE_FILE" ]; then
+            echo "::error::Missing $OVERRIDE_FILE. biddy-spa deployments require a docker-compose.override.yml that builds spa.Dockerfile."
+            exit 1
+          fi
+
+          if ! grep -q "spa.Dockerfile" "$OVERRIDE_FILE"; then
+            echo "::error::Domain '${{ inputs.domain }}' is not configured for biddy-spa builds. Expected spa.Dockerfile in docker-compose.override.yml."
+            exit 1
+          fi
+      - name: Validate Rails deployment input
+        if: ${{ inputs.deployment_target == 'rails' }}
+        run: |
+          set -euo pipefail
+
+          OVERRIDE_FILE="${{ github.workspace }}/${{ inputs.domain }}/docker-compose.override.yml"
+          if [ ! -f "$OVERRIDE_FILE" ]; then
+            echo "::error::Missing $OVERRIDE_FILE. Rails deployments require a docker-compose.override.yml with app/nginx build definitions."
+            exit 1
+          fi
+
+          if ! grep -q "app.Dockerfile" "$OVERRIDE_FILE"; then
+            echo "::error::Domain '${{ inputs.domain }}' is not configured for Rails builds. Expected app.Dockerfile in docker-compose.override.yml."
+            exit 1
+          fi
       - name: Create .env file
+        if: ${{ inputs.deployment_target == 'rails' }}
         run: |
           touch ${{ github.workspace }}/.env
           echo RAILS_ENV=production >> .env
           echo SECRET_KEY_BASE=${{ secrets.SECRET_KEY_BASE }} >> .env
-          cat ${{ github.workspace }}/.env
-      - name: Build images
+      - name: Build images (Rails)
+        if: ${{ inputs.deployment_target == 'rails' }}
         run: |
-          docker-compose \
-            --env-file ${{ github.workspace }}/.env \
-            -f ${{ github.workspace }}/${{ inputs.domain }}/docker-compose.yml \
-            -f ${{ github.workspace }}/${{ inputs.domain }}/docker-compose.override.yml \
-            build --no-cache
+          if command -v docker-compose >/dev/null 2>&1; then
+            docker-compose \
+              --env-file ${{ github.workspace }}/.env \
+              -f ${{ github.workspace }}/${{ inputs.domain }}/docker-compose.yml \
+              -f ${{ github.workspace }}/${{ inputs.domain }}/docker-compose.override.yml \
+              build --no-cache
+          else
+            docker compose \
+              --env-file ${{ github.workspace }}/.env \
+              -f ${{ github.workspace }}/${{ inputs.domain }}/docker-compose.yml \
+              -f ${{ github.workspace }}/${{ inputs.domain }}/docker-compose.override.yml \
+              build --no-cache
+          fi
+      - name: Build images (biddy-spa)
+        if: ${{ inputs.deployment_target == 'biddy-spa' }}
+        run: |
+          if command -v docker-compose >/dev/null 2>&1; then
+            docker-compose \
+              -f ${{ github.workspace }}/${{ inputs.domain }}/docker-compose.yml \
+              -f ${{ github.workspace }}/${{ inputs.domain }}/docker-compose.override.yml \
+              build --no-cache
+          else
+            docker compose \
+              -f ${{ github.workspace }}/${{ inputs.domain }}/docker-compose.yml \
+              -f ${{ github.workspace }}/${{ inputs.domain }}/docker-compose.override.yml \
+              build --no-cache
+          fi
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-      - name: Push images
+      - name: Push images (Rails)
+        if: ${{ inputs.deployment_target == 'rails' }}
         run: |
-          docker-compose \
-            --env-file ${{ github.workspace }}/.env \
-            -f "${{ github.workspace }}/${{ inputs.domain }}/docker-compose.yml" \
-            -f "${{ github.workspace }}/${{ inputs.domain }}/docker-compose.override.yml" \
-            push
+          if command -v docker-compose >/dev/null 2>&1; then
+            docker-compose \
+              --env-file ${{ github.workspace }}/.env \
+              -f "${{ github.workspace }}/${{ inputs.domain }}/docker-compose.yml" \
+              -f "${{ github.workspace }}/${{ inputs.domain }}/docker-compose.override.yml" \
+              push
+          else
+            docker compose \
+              --env-file ${{ github.workspace }}/.env \
+              -f "${{ github.workspace }}/${{ inputs.domain }}/docker-compose.yml" \
+              -f "${{ github.workspace }}/${{ inputs.domain }}/docker-compose.override.yml" \
+              push
+          fi
+      - name: Push images (biddy-spa)
+        if: ${{ inputs.deployment_target == 'biddy-spa' }}
+        run: |
+          if command -v docker-compose >/dev/null 2>&1; then
+            docker-compose \
+              -f "${{ github.workspace }}/${{ inputs.domain }}/docker-compose.yml" \
+              -f "${{ github.workspace }}/${{ inputs.domain }}/docker-compose.override.yml" \
+              push
+          else
+            docker compose \
+              -f "${{ github.workspace }}/${{ inputs.domain }}/docker-compose.yml" \
+              -f "${{ github.workspace }}/${{ inputs.domain }}/docker-compose.override.yml" \
+              push
+          fi
       - name: Create host folder
         uses: appleboy/ssh-action@v1.0.0
         with:
@@ -63,4 +157,8 @@ jobs:
           key: ${{ secrets.DIGITAL_OCEAN_KEY }}
           script: |
             cd ${{ inputs.domain }}
-            docker-compose pull && docker-compose up -d
+            if command -v docker-compose >/dev/null 2>&1; then
+              docker-compose pull && docker-compose up -d
+            else
+              docker compose pull && docker compose up -d
+            fi
