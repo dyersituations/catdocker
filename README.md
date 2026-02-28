@@ -42,11 +42,13 @@ cat ~/.ssh/id_rsa
 
 ### Run SPA Locally
 
-- Sync SPA source into the domain folder (keeps compose files in place):
+- Sync SPA source into a separate build folder:
 
 ```bash
-cp -a ../biddy-spa/. ./biddyonthebench/
-rm -rf ./biddyonthebench/.git ./biddyonthebench/node_modules ./biddyonthebench/dist
+# Run these commands from the catdocker root folder.
+rm -rf ./biddy-spa-src
+cp -a ../biddy-spa ./biddy-spa-src
+rm -rf ./biddy-spa-src/.git ./biddy-spa-src/node_modules ./biddy-spa-src/dist
 ```
 
 ```bash

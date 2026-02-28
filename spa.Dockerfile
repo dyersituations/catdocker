@@ -2,10 +2,10 @@ FROM node:22.12.0-alpine AS build
 
 WORKDIR /app
 
-COPY biddyonthebench/package*.json ./
+COPY biddy-spa-src/package*.json ./
 RUN npm ci
 
-COPY biddyonthebench/ ./
+COPY biddy-spa-src/ ./
 RUN npm run build
 
 FROM nginx:alpine

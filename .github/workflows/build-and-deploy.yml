@@ -26,19 +26,25 @@ jobs:
         with:
           repository: dyersituations/catcms
           path: catcms
-      - name: Check out biddy-spa repo into domain folder
+      - name: Check out biddy-spa repo
         if: ${{ inputs.deployment_target == 'biddy-spa' }}
         uses: actions/checkout@v4
         with:
           repository: dyersituations/biddy-spa
-          path: ${{ inputs.domain }}
-          clean: false
+          path: biddy-spa-src
       - name: Validate biddy-spa deployment input
         if: ${{ inputs.deployment_target == 'biddy-spa' }}
         run: |
           set -euo pipefail
 
+          SPA_SOURCE_DIR="${{ github.workspace }}/biddy-spa-src"
           OVERRIDE_FILE="${{ github.workspace }}/${{ inputs.domain }}/docker-compose.override.yml"
+
+          if [ ! -f "$SPA_SOURCE_DIR/package.json" ]; then
+            echo "::error::Missing $SPA_SOURCE_DIR/package.json. biddy-spa source checkout did not complete."
+            exit 1
+          fi
+
           if [ ! -f "$OVERRIDE_FILE" ]; then
             echo "::error::Missing $OVERRIDE_FILE. biddy-spa deployments require a docker-compose.override.yml that builds spa.Dockerfile."
             exit 1
